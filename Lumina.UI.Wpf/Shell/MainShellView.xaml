@@ -1,0 +1,224 @@
+﻿<UserControl x:Class="Lumina.UI.Wpf.Shell.MainShellView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+
+    <Grid Background="{DynamicResource Theme.WallBrush}">
+        <Border Background="{DynamicResource Theme.GlowBrush}" IsHitTestVisible="False" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="248" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧导航 -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource Theme.MicaBrush}"
+                    BorderBrush="{DynamicResource Theme.BorderBrush}"
+                    BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Margin="20,22,20,16">
+                        <TextBlock Text="拾光" Style="{StaticResource Theme.Text.Title}" />
+                        <TextBlock x:Name="BrandLine"
+                                   Text="Lumina"
+                                   Style="{StaticResource Theme.Text.Tertiary}"
+                                   Margin="0,4,0,0" />
+                        <TextBlock x:Name="SidebarClockText"
+                                   Style="{StaticResource Theme.Text.Mono}"
+                                   FontSize="18"
+                                   Foreground="{DynamicResource Theme.AccentBrush}"
+                                   Margin="0,12,0,0" />
+                    </StackPanel>
+
+                    <ListBox x:Name="NavList"
+                             Grid.Row="1"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             SelectionChanged="OnNavSelectionChanged">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                                <Setter Property="FocusVisualStyle" Value="{StaticResource Theme.FocusVisual}" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="14,11" />
+                                <Setter Property="Margin" Value="8,3" />
+                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Root"
+                                                    Background="Transparent"
+                                                    CornerRadius="{DynamicResource Theme.Radius.Small}"
+                                                    Padding="{TemplateBinding Padding}"
+                                                    SnapsToDevicePixels="True">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource Theme.HoverBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource Theme.AccentSoftBrush}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Border x:Name="Indicator"
+                                            Width="3"
+                                            Height="18"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Background="{DynamicResource Theme.AccentBrush}"
+                                            CornerRadius="2"
+                                            Opacity="0" />
+                                    <StackPanel Margin="12,0,0,0">
+                                        <TextBlock x:Name="TitleText"
+                                                   Text="{Binding Title}"
+                                                   FontSize="15"
+                                                   Style="{StaticResource Theme.Text.Base}" />
+                                    </StackPanel>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                        <Setter TargetName="Indicator" Property="Opacity" Value="1" />
+                                        <Setter TargetName="TitleText" Property="Foreground" Value="{DynamicResource Theme.AccentBrush}" />
+                                        <Setter TargetName="TitleText" Property="FontWeight" Value="SemiBold" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Border Grid.Row="2"
+                            Padding="20,12"
+                            BorderBrush="{DynamicResource Theme.BorderBrush}"
+                            BorderThickness="0,1,0,0">
+                        <TextBlock x:Name="FooterText"
+                                   Style="{StaticResource Theme.Text.Tertiary}"
+                                   FontSize="{DynamicResource Theme.FontSize.Caption}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 右侧内容 -->
+            <Grid Grid.Column="1" Margin="28,24,28,24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="0,0,0,18">
+                    <StackPanel>
+                        <TextBlock x:Name="PageTitle" Style="{StaticResource Theme.Text.Title}" />
+                        <TextBlock x:Name="PageSubtitle"
+                                   Style="{StaticResource Theme.Text.Secondary}"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top">
+                        <Button x:Name="ModuleSettingsButton"
+                                Content="&#xE713;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                ToolTip="本模块设置"
+                                AutomationProperties.Name="本模块设置"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="9,6,9,6"
+                                VerticalAlignment="Center"
+                                Click="OnModuleSettingsClick" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Border x:Name="ModulePlaceholder" Style="{StaticResource Theme.Card.Strong}" VerticalAlignment="Top">
+                        <StackPanel>
+                            <Border Height="160"
+                                    Background="{DynamicResource Theme.AccentSoftBrush}"
+                                    CornerRadius="{DynamicResource Theme.Radius.Large}">
+                                <TextBlock x:Name="PlaceholderGlyph"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="72"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource Theme.AccentBrush}" />
+                            </Border>
+                            <TextBlock x:Name="PlaceholderText"
+                                       Style="{StaticResource Theme.Text.Secondary}"
+                                       Margin="0,18,0,0" />
+                            <TextBlock Text="如果持续出现，请重启拾光；问题仍在时请查看日志目录。"
+                                       Style="{StaticResource Theme.Text.Tertiary}"
+                                       Margin="0,10,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <ContentControl x:Name="ClockHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="CalendarHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="TodoHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="ClipboardHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="CaptureHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="CountdownHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="FocusHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="NoteHost" Visibility="Collapsed" />
+                    <ContentControl x:Name="VaultHost" Visibility="Collapsed" />
+
+                    <ContentControl x:Name="SettingsHost" Visibility="Collapsed" />
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <ContentControl x:Name="DrawerHost" Panel.ZIndex="5" />
+
+        <Border x:Name="ReminderBar"
+                Panel.ZIndex="6"
+                Width="380"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="0,0,18,18"
+                Visibility="Collapsed"
+                Style="{StaticResource Theme.Card.Strong}">
+            <StackPanel>
+                <TextBlock x:Name="ReminderTitle"
+                           Style="{StaticResource Theme.Text.Base}"
+                           FontWeight="SemiBold"
+                           TextWrapping="Wrap" />
+                <TextBlock x:Name="ReminderBody"
+                           Style="{StaticResource Theme.Text.Tertiary}"
+                           TextWrapping="Wrap"
+                           Margin="0,4,0,0" />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,10,0,0">
+                    <Button Content="查看"
+                            Style="{StaticResource Theme.Button.Primary}"
+                            Padding="10,4,10,4"
+                            FontSize="12"
+                            Click="OnReminderViewClick" />
+                    <Button Content="关闭"
+                            Style="{StaticResource Theme.Button.Ghost}"
+                            Padding="10,4,10,4"
+                            FontSize="12"
+                            Margin="8,0,0,0"
+                            Click="OnReminderCloseClick" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

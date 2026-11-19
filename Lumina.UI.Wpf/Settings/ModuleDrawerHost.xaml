@@ -1,0 +1,49 @@
+<UserControl x:Class="Lumina.UI.Wpf.Settings.ModuleDrawerHost"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Visibility="Collapsed"
+             Focusable="True"
+             Background="Transparent">
+    <Grid>
+        <Border x:Name="Scrim"
+                Background="{DynamicResource Theme.ScrimSoftBrush}"
+                MouseLeftButtonDown="OnScrimClick" />
+
+        <Border x:Name="Panel"
+                Width="396"
+                HorizontalAlignment="Right"
+                Style="{StaticResource Theme.Drawer.Panel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock x:Name="TitleText" Style="{StaticResource Theme.Text.SectionTitle}" Margin="0" />
+                        <TextBlock x:Name="SubtitleText"
+                                   Text="仅加载当前模块设置，修改即时生效。"
+                                   Style="{StaticResource Theme.Text.Tertiary}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                    <Button x:Name="CloseButton"
+                            Content="关闭"
+                            Style="{StaticResource Theme.Button.Ghost}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Padding="10,5,10,5"
+                            FontSize="12"
+                            Click="OnCloseClick" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="1"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ContentControl x:Name="ContentHost" />
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

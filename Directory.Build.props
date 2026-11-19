@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <!-- P2-04 起截图捕获使用 Windows.Graphics.Capture（WinRT 投影）；两个 Windows 项目统一钉住投影包版本。 -->
+    <WindowsSdkPackageVersion Condition="'$(TargetPlatformIdentifier)' == 'windows'">10.0.26100.87</WindowsSdkPackageVersion>
+    <Company>Lumina</Company>
+    <Product>拾光 Lumina</Product>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
+  </PropertyGroup>
+</Project>

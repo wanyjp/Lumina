@@ -1,0 +1,186 @@
+<UserControl x:Class="Lumina.UI.Wpf.Clipboard.ClipboardCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+
+    <Grid x:Name="Root" ClipToBounds="True">
+        <!-- 滑动后露出的操作层：默认折叠，仅在拖动时显示，避免高分屏边缘舍入透出 -->
+        <StackPanel x:Name="ActionLayer"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Margin="0,1,0,1"
+                    Visibility="Collapsed">
+            <Button x:Name="SwipeEditButton"
+                    Content="编辑"
+                    Style="{StaticResource Theme.Swipe.Edit}"
+                    Click="OnSwipeEditClick" />
+            <Button x:Name="SwipeDeleteButton"
+                    Content="删除"
+                    Style="{StaticResource Theme.Swipe.Delete}"
+                    Click="OnSwipeDeleteClick" />
+        </StackPanel>
+
+        <Border x:Name="Surface"
+                Background="{DynamicResource Theme.CardSolidBrush}"
+                BorderBrush="{DynamicResource Theme.LineBrush}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                SnapsToDevicePixels="True">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="SwipeTransform" />
+            </Border.RenderTransform>
+
+            <Grid Margin="11,9,11,9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- 标题行：类型 / 时间 / 来源 / 固定 / 多选 -->
+                <Grid Grid.Row="0" x:Name="PreviewArea" Background="Transparent">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <CheckBox x:Name="SelectCheck"
+                                  Style="{StaticResource Theme.Clip.Select}"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,8,0"
+                                  Visibility="Collapsed"
+                                  Click="OnSelectClick" />
+                        <Border x:Name="KindChip" Style="{StaticResource Theme.Chip}" Padding="7,1,7,1">
+                            <TextBlock x:Name="KindText" FontSize="11" />
+                        </Border>
+                        <Border x:Name="PinChip"
+                                Style="{StaticResource Theme.Chip}"
+                                Background="{DynamicResource Theme.AccentSoftBrush}"
+                                Padding="6,1,6,1"
+                                Margin="6,0,0,0"
+                                Visibility="Collapsed">
+                            <TextBlock Text="固定" FontSize="11" Foreground="{DynamicResource Theme.AccentBrush}" />
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="10,0,8,0">
+                        <TextBlock x:Name="MetaText"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   FontSize="{DynamicResource Theme.FontSize.Caption}"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
+                        <Button x:Name="SourcesButton"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="6,0"
+                                FontSize="11"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="查看来源"
+                                Visibility="Collapsed"
+                                Click="OnSourcesClick" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="ExpandGlyph"
+                               Grid.Column="2"
+                               Text="&#xE70D;"
+                               FontFamily="Segoe MDL2 Assets"
+                               FontSize="11"
+                               Foreground="{DynamicResource Theme.TextTertiaryBrush}"
+                               VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- 预览正文 -->
+                <TextBlock x:Name="PreviewText"
+                           Grid.Row="1"
+                           Margin="0,7,0,0"
+                           MaxHeight="40"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{DynamicResource Theme.TextBrush}" />
+
+                <!-- 备注 -->
+                <TextBlock x:Name="NoteText"
+                           Grid.Row="2"
+                           Style="{StaticResource Theme.Text.Tertiary}"
+                           Margin="0,6,0,0"
+                           MaxHeight="34"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           Visibility="Collapsed" />
+
+                <!-- 标签 -->
+                <WrapPanel x:Name="TagPanel" Grid.Row="3" Margin="0,7,0,0" Visibility="Collapsed" />
+
+                <!-- 展开详情 -->
+                <StackPanel x:Name="DetailPanel" Grid.Row="4" Visibility="Collapsed">
+                    <Border Height="1"
+                            Background="{DynamicResource Theme.LineBrush}"
+                            Margin="0,9,0,9" />
+                    <ContentControl x:Name="DetailHost" />
+                    <TextBlock x:Name="DetailHint"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,6,0,0"
+                               Visibility="Collapsed" />
+                    <WrapPanel Margin="0,10,0,0">
+                        <Button x:Name="CopyButton"
+                                Content="复制到剪贴板"
+                                Style="{StaticResource Theme.Button.Primary}"
+                                Padding="10,4,10,4"
+                                FontSize="12"
+                                Margin="0,0,8,6"
+                                Click="OnCopyClick" />
+                        <Button x:Name="CopyPlainButton"
+                                Content="复制为纯文本"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="10,4,10,4"
+                                FontSize="12"
+                                Margin="0,0,8,6"
+                                Click="OnCopyPlainClick" />
+                        <Button x:Name="PinButton"
+                                Content="固定"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,4,10,4"
+                                FontSize="12"
+                                Margin="0,0,8,6"
+                                Click="OnPinClick" />
+                        <Button x:Name="EditButton"
+                                Content="备注与标签"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,4,10,4"
+                                FontSize="12"
+                                Margin="0,0,8,6"
+                                Click="OnEditClick" />
+                        <Button x:Name="DeleteButton"
+                                Content="删除"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,4,10,4"
+                                FontSize="12"
+                                Margin="0,0,0,6"
+                                Click="OnDeleteClick" />
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 键盘焦点指示 -->
+        <Border x:Name="FocusRing"
+                BorderBrush="{DynamicResource Theme.AccentBrush}"
+                BorderThickness="{DynamicResource Theme.Stroke.Hairline}"
+                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                IsHitTestVisible="False"
+                Visibility="Collapsed" />
+    </Grid>
+</UserControl>

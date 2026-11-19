@@ -1,0 +1,45 @@
+<Window x:Class="Lumina.UI.Wpf.Capture.PinnedImageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="贴图"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStartupLocation="CenterScreen"
+        Focusable="True"
+        KeyDown="OnWindowKeyDown">
+
+    <Grid Margin="14">
+        <Border x:Name="Card"
+                Background="{DynamicResource Theme.CardSolidBrush}"
+                BorderBrush="{DynamicResource Theme.FieldLineBrush}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                Effect="{DynamicResource Theme.Shadow}"
+                SnapsToDevicePixels="True">
+            <Image x:Name="Image"
+                   Stretch="Uniform"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   MouseWheel="OnImageMouseWheel" />
+        </Border>
+
+        <Button x:Name="CloseButton"
+                Content="&#xE711;"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="10"
+                Width="26"
+                Height="26"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="#E0202020"
+                Foreground="White"
+                BorderThickness="0"
+                Cursor="Hand"
+                Opacity="0"
+                ToolTip="关闭贴图（Esc）"
+                Click="OnCloseClick" />
+    </Grid>
+</Window>

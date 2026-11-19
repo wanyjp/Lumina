@@ -1,0 +1,188 @@
+<UserControl x:Class="Lumina.UI.Wpf.Clock.TimerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+    <Border Style="{StaticResource Theme.Card.Strong}">
+        <StackPanel>
+            <Grid Margin="0,0,0,14">
+                <WrapPanel>
+                    <RadioButton x:Name="TimerTab"
+                                 Content="计时器"
+                                 Tag="timer"
+                                 GroupName="TimerTab"
+                                 Style="{StaticResource Theme.ThemeChoice}"
+                                 Margin="0,0,8,8"
+                                 Checked="OnTabChecked" />
+                    <RadioButton Content="秒表"
+                                 Tag="stopwatch"
+                                 GroupName="TimerTab"
+                                 Style="{StaticResource Theme.ThemeChoice}"
+                                 Margin="0,0,8,8"
+                                 Checked="OnTabChecked" />
+                    <RadioButton Content="番茄钟"
+                                 Tag="pomodoro"
+                                 GroupName="TimerTab"
+                                 Style="{StaticResource Theme.ThemeChoice}"
+                                 Margin="0,0,8,8"
+                                 Checked="OnTabChecked" />
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="放大全屏"
+                            Style="{StaticResource Theme.Button.Ghost}"
+                            Margin="0,0,4,0"
+                            Click="OnZoomClick" />
+                    <Button Content="缩小为小组件"
+                            Style="{StaticResource Theme.Button.Ghost}"
+                            Click="OnMiniClick" />
+                </StackPanel>
+            </Grid>
+
+            <StackPanel x:Name="TimerSetupPanel">
+                <WrapPanel HorizontalAlignment="Center">
+                    <TextBlock x:Name="DurationCaption"
+                               Text="目标时长"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,8" />
+                    <TextBox x:Name="HourBox" Text="00" Width="54" MaxLength="3"
+                             Padding="6,4" TextAlignment="Center"
+                             Style="{StaticResource Theme.Input}" Margin="0,0,4,8"
+                             LostFocus="OnDurationCommit"
+                             PreviewKeyDown="OnDurationKeyDown" />
+                    <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,4,8" />
+                    <TextBox x:Name="MinuteBox" Text="25" Width="54" MaxLength="3"
+                             Padding="6,4" TextAlignment="Center"
+                             Style="{StaticResource Theme.Input}" Margin="0,0,4,8"
+                             LostFocus="OnDurationCommit"
+                             PreviewKeyDown="OnDurationKeyDown" />
+                    <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,4,8" />
+                    <TextBox x:Name="SecondBox" Text="00" Width="54" MaxLength="3"
+                             Padding="6,4" TextAlignment="Center"
+                             Style="{StaticResource Theme.Input}" Margin="0,0,4,8"
+                             LostFocus="OnDurationCommit"
+                             PreviewKeyDown="OnDurationKeyDown" />
+                </WrapPanel>
+
+                <WrapPanel x:Name="TimerPresetsPanel" HorizontalAlignment="Center" Margin="0,0,0,4">
+                    <Button Content="5 分钟" Tag="5" Style="{StaticResource Theme.Button.Secondary}"
+                            Margin="0,0,8,8" Click="OnPresetClick" />
+                    <Button Content="25 分钟" Tag="25" Style="{StaticResource Theme.Button.Secondary}"
+                            Margin="0,0,8,8" Click="OnPresetClick" />
+                    <Button Content="1 小时" Tag="60" Style="{StaticResource Theme.Button.Secondary}"
+                            Margin="0,0,8,8" Click="OnPresetClick" />
+                    <Button Content="1.5 小时" Tag="90" Style="{StaticResource Theme.Button.Secondary}"
+                            Margin="0,0,8,8" Click="OnPresetClick" />
+                </WrapPanel>
+
+                <WrapPanel x:Name="PomodoroCyclesPanel" HorizontalAlignment="Center"
+                           Visibility="Collapsed" Margin="0,0,0,4">
+                    <TextBlock Text="循环次数"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,8" />
+                    <TextBox x:Name="CycleBox" Text="4" Width="64" MaxLength="2"
+                             Padding="6,4" TextAlignment="Center"
+                             Style="{StaticResource Theme.Input}" Margin="0,0,4,8"
+                             LostFocus="OnCycleCommit"
+                             PreviewKeyDown="OnCycleKeyDown" />
+                    <TextBlock Text="轮（1–12）"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,8" />
+                </WrapPanel>
+            </StackPanel>
+
+            <TextBlock x:Name="PhaseText"
+                       HorizontalAlignment="Center"
+                       Style="{StaticResource Theme.Text.Caption}"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource Theme.AccentBrush}"
+                       Margin="0,6,0,0" />
+
+            <TextBlock x:Name="DisplayText"
+                       HorizontalAlignment="Center"
+                       Style="{StaticResource Theme.Text.Mono}"
+                       FontSize="{DynamicResource Theme.FontSize.Timer}"
+                       FontWeight="SemiBold"
+                       Margin="0,4,0,0" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button x:Name="PlayPauseButton"
+                        Content="开始"
+                        Style="{StaticResource Theme.Button.Primary}"
+                        Width="96"
+                        Margin="0,0,10,0"
+                        Click="OnPlayPauseClick" />
+                <Button x:Name="LapButton"
+                        Content="计圈"
+                        Style="{StaticResource Theme.Button.Secondary}"
+                        Width="80"
+                        Margin="0,0,10,0"
+                        Visibility="Collapsed"
+                        Click="OnLapClick" />
+                <Button x:Name="MarkButton"
+                        Content="标记"
+                        Style="{StaticResource Theme.Button.Secondary}"
+                        Width="80"
+                        Margin="0,0,10,0"
+                        Visibility="Collapsed"
+                        Click="OnMarkClick" />
+                <Button Content="重置"
+                        Style="{StaticResource Theme.Button.Secondary}"
+                        Width="80"
+                        Click="OnResetClick" />
+            </StackPanel>
+
+            <TextBlock x:Name="HintText"
+                       Style="{StaticResource Theme.Text.Tertiary}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       Margin="0,10,0,0" />
+
+            <Border x:Name="LapPanel"
+                    Visibility="Collapsed"
+                    Margin="0,12,0,0"
+                    Background="{DynamicResource Theme.CardBrush}"
+                    BorderBrush="{DynamicResource Theme.LineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{DynamicResource Theme.Radius.Small}"
+                    Padding="10">
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock x:Name="LapTitleText" Text="圈次" Style="{StaticResource Theme.Text.Caption}" />
+                        <TextBlock x:Name="LapSplitTitle"
+                                   Text="单圈 / 累计"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   HorizontalAlignment="Right" />
+                    </Grid>
+                    <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="LapList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2">
+                                        <TextBlock Text="{Binding Index, StringFormat='第 {0} 圈'}"
+                                                   Style="{StaticResource Theme.Text.Secondary}" />
+                                        <TextBlock Text="{Binding Total}"
+                                                   Style="{StaticResource Theme.Text.Mono}"
+                                                   HorizontalAlignment="Right" />
+                                        <TextBlock Text="{Binding Split}"
+                                                   Style="{StaticResource Theme.Text.Tertiary}"
+                                                   HorizontalAlignment="Right"
+                                                   Margin="0,0,96,0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <TextBlock x:Name="EmptyLapText"
+                               Text="还没有计圈记录。"
+                               Style="{StaticResource Theme.Text.Tertiary}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

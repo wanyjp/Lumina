@@ -1,0 +1,346 @@
+<UserControl x:Class="Lumina.UI.Wpf.Capture.CaptureView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,8,0">
+
+            <Border Style="{StaticResource Theme.Card.Strong}">
+                <StackPanel Margin="24">
+                    <TextBlock Text="开始截图" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock Text="截图完成进入标注编辑器：矩形 / 椭圆 / 直线 / 箭头 / 画笔 / 文字 / 马赛克 / 荧光高亮；双行工具栏提供裁剪与左转/右转/180° 旋转，全部操作可撤销重做，可保存、复制或贴图置顶。"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap" />
+
+                    <UniformGrid Columns="4" Margin="0,18,0,0">
+                        <Button x:Name="RegionButton"
+                                Content="区域截图"
+                                Style="{StaticResource Theme.Button.Primary}"
+                                Padding="0,14"
+                                Margin="0,0,10,0"
+                                Click="OnRegionClick" />
+                        <Button x:Name="FullScreenButton"
+                                Content="全屏截图"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="0,14"
+                                Margin="0,0,10,0"
+                                Click="OnFullScreenClick" />
+                        <Button x:Name="WindowButton"
+                                Content="窗口截图"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="0,14"
+                                Margin="0,0,10,0"
+                                Click="OnWindowClick" />
+                        <Button x:Name="DelayedButton"
+                                Content="延时截图"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="0,14"
+                                Click="OnDelayedClick" />
+                    </UniformGrid>
+
+                    <TextBlock Text="区域：拖拽框选（Enter 确认，Esc 取消） · 全屏：所有显示器整屏 · 窗口：从可见窗口列表选择 · 延时：3 秒倒计时。"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,10,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Theme.Card}" Margin="0,14,0,0">
+                <StackPanel Margin="24">
+                    <Grid>
+                        <TextBlock Text="截图历史" Style="{StaticResource Theme.Text.SectionTitle}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <CheckBox x:Name="ThumbOnlyCheck"
+                                      Content="仅保留缩略图"
+                                      Style="{StaticResource Theme.Toggle}"
+                                      VerticalAlignment="Center"
+                                      ToolTip="开启后新截图只保留缩略图，不保存原图"
+                                      Click="OnThumbOnlyChanged" />
+                            <Button x:Name="SelectAllButton"
+                                    Content="全选"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="10,6"
+                                    Margin="12,0,0,0"
+                                    Visibility="Collapsed"
+                                    Click="OnSelectAllClick" />
+                            <Button x:Name="DeleteSelectedButton"
+                                    Content="删除"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="10,6"
+                                    Margin="6,0,0,0"
+                                    IsEnabled="False"
+                                    Visibility="Collapsed"
+                                    Click="OnDeleteSelectedClick" />
+                            <Button x:Name="MultiSelectButton"
+                                    Content="多选删除"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="10,6"
+                                    Margin="6,0,0,0"
+                                    Click="OnMultiSelectClick" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock x:Name="HistorySummaryText"
+                               AutomationProperties.AutomationId="HistorySummaryText"
+                               Text="超出保留上限后自动清理最旧记录；上限可在本模块设置中调整。"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,6,0,0" />
+
+                    <!-- 三行高度：超出后在本区域内滚动，避免历史把整页撑长。 -->
+                    <ScrollViewer x:Name="HistoryScroll"
+                                  AutomationProperties.AutomationId="HistoryScroll"
+                                  Margin="0,10,0,0"
+                                  MaxHeight="486"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="ScreenshotHistoryPanel"
+                                      AutomationProperties.AutomationId="ScreenshotHistoryPanel">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource Theme.Card}"
+                                            Width="158"
+                                            Margin="0,0,10,10"
+                                            Padding="8">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Border Height="82"
+                                                        CornerRadius="6"
+                                                        Background="{DynamicResource Theme.FieldBrush}"
+                                                        ClipToBounds="True"
+                                                        Cursor="Hand"
+                                                        Tag="{Binding}"
+                                                        MouseLeftButtonUp="OnScreenshotThumbnailClick">
+                                                    <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                                                </Border>
+                                                <Border Background="#99000000"
+                                                        CornerRadius="4"
+                                                        Padding="3,1,3,1"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Top"
+                                                        Margin="4,4,0,0"
+                                                        Visibility="{Binding ShowCheckBox, Converter={StaticResource BoolToVisibility}}">
+                                                    <CheckBox AutomationProperties.Name="{Binding Title}"
+                                                              AutomationProperties.HelpText="勾选后可批量删除"
+                                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                              Checked="OnScreenshotSelectionChanged"
+                                                              Unchecked="OnScreenshotSelectionChanged"
+                                                              ToolTip="勾选后可批量删除" />
+                                                </Border>
+                                            </Grid>
+                                            <TextBlock Text="{Binding Title}"
+                                                       Style="{StaticResource Theme.Text.Secondary}"
+                                                       Margin="0,8,0,0"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <Grid Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding Subtitle}"
+                                                           Style="{StaticResource Theme.Text.Tertiary}"
+                                                           VerticalAlignment="Center" />
+                                                <Button Content="删除"
+                                                        HorizontalAlignment="Right"
+                                                        Style="{StaticResource Theme.Button.Ghost}"
+                                                        Padding="6,2"
+                                                        FontSize="11"
+                                                        Tag="{Binding}"
+                                                        Click="OnDeleteScreenshotClick" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <TextBlock x:Name="HistoryEmptyText"
+                               AutomationProperties.AutomationId="HistoryEmptyText"
+                               Text="还没有截图记录。"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Visibility="Collapsed" />
+
+                    <!-- 截图去向：并入历史卡片左下角，不再单独占一块。 -->
+                    <Border BorderBrush="{DynamicResource Theme.LineBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="0,6,0,0"
+                            Padding="0,10,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="截图去向"
+                                           Style="{StaticResource Theme.Text.Caption}"
+                                           FontWeight="SemiBold" />
+                                <TextBlock x:Name="StorageText"
+                                           AutomationProperties.AutomationId="StorageText"
+                                           Style="{StaticResource Theme.Text.Tertiary}"
+                                           Margin="0,4,0,0"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTipService.ShowDuration="10000" />
+                                <TextBlock Text="保存为 PNG 原图；保留张数可在本模块设置中调整，超出后清理最旧记录。"
+                                           Style="{StaticResource Theme.Text.Caption}"
+                                           Margin="0,4,0,0"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <Button x:Name="OpenFolderButton"
+                                    Grid.Column="1"
+                                    Content="打开存储目录"
+                                    Style="{StaticResource Theme.Button.Secondary}"
+                                    Padding="12,6"
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Click="OnOpenFolderClick" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Theme.Card}" Margin="0,14,0,0">
+                <StackPanel Margin="24">
+                    <TextBlock Text="取色器" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock Text="全屏放大镜取色，单击拾取；颜色按 sRGB 显示，历史色板保留最近 12 个（按最近使用去重）。取色时自动隐藏主窗口与贴图，避免遮挡目标像素。"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap" />
+
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border x:Name="CurrentColorSwatch"
+                                Width="56"
+                                Height="56"
+                                CornerRadius="10"
+                                Background="{DynamicResource Theme.WallBrush}"
+                                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                                BorderThickness="1" />
+                        <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="CurrentHexText"
+                                       AutomationProperties.AutomationId="CurrentHexText"
+                                       Text="#------"
+                                       FontSize="20"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="CurrentRgbText"
+                                       AutomationProperties.AutomationId="CurrentRgbText"
+                                       Text="RGB(-, -, -)"
+                                       Style="{StaticResource Theme.Text.Tertiary}"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="PickColorButton"
+                                    Content="屏幕取色"
+                                    Style="{StaticResource Theme.Button.Primary}"
+                                    Padding="16,10"
+                                    Click="OnPickColorClick" />
+                            <Button x:Name="CopyColorButton"
+                                    Content="复制色值"
+                                    Style="{StaticResource Theme.Button.Secondary}"
+                                    Padding="16,10"
+                                    Margin="10,0,0,0"
+                                    Click="OnCopyColorClick" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="历史色板（单击色块复制）"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,18,0,0" />
+                    <WrapPanel x:Name="HistoryPanel" Margin="0,8,0,0" />
+                    <TextBlock x:Name="HotkeyHintText"
+                               AutomationProperties.AutomationId="HotkeyHintText"
+                               Text="快捷键：Alt + Shift + C 取色 · Ctrl + Shift + C 复制当前色值（截图模块聚焦时生效）"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Theme.Card}" Margin="0,14,0,0">
+                <StackPanel Margin="24">
+                    <TextBlock Text="OCR 文字提取" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock x:Name="OcrHintText"
+                               Text="区域截图后在本机识别文字（Windows.Media.Ocr），结果可编辑、可复制；全程本地处理，图片不会上传。"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <Button x:Name="OcrButton"
+                                Content="区域截图并识别"
+                                Style="{StaticResource Theme.Button.Primary}"
+                                Padding="16,10"
+                                Click="OnOcrClick" />
+                        <Button x:Name="CopyOcrButton"
+                                Content="复制结果"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="16,10"
+                                Margin="10,0,0,0"
+                                Click="OnCopyOcrClick" />
+                        <TextBlock x:Name="OcrStatusText"
+                                   AutomationProperties.AutomationId="OcrStatusText"
+                                   Style="{StaticResource Theme.Text.Tertiary}"
+                                   Margin="14,0,0,0"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <TextBox x:Name="OcrResultBox"
+                             AutomationProperties.AutomationId="OcrResultBox"
+                             Style="{StaticResource Theme.Input}"
+                             Margin="0,12,0,0"
+                             Height="150"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             VerticalContentAlignment="Top" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="StatusText"
+                       Style="{StaticResource Theme.Text.Secondary}"
+                       Margin="4,14,0,0"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed" />
+        </StackPanel>
+        </ScrollViewer>
+
+        <!-- 轻提示：复制色值后短暂浮现，避免打断取色流程。 -->
+        <Border x:Name="ToastHost"
+                AutomationProperties.AutomationId="ToastHost"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,24"
+                Padding="16,10"
+                CornerRadius="10"
+                Background="{DynamicResource Theme.MicaBrush}"
+                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                BorderThickness="1"
+                Opacity="0"
+                Visibility="Collapsed"
+                IsHitTestVisible="False">
+            <TextBlock x:Name="ToastText"
+                       AutomationProperties.AutomationId="ToastText"
+                       Text="已复制"
+                       Style="{StaticResource Theme.Text.Base}" />
+        </Border>
+    </Grid>
+</UserControl>

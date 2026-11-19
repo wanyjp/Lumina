@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lumina.Services\Lumina.Services.csproj" />
+    <ProjectReference Include="..\Lumina.Domain\Lumina.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" />
+    <PackageReference Include="NAudio.Vorbis" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- P2-04：windows10 TFM 引入 WinRT 投影，供 Windows.Graphics.Capture 截图捕获使用。 -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+</Project>

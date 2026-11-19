@@ -1,0 +1,287 @@
+<Window x:Class="Lumina.UI.Wpf.Capture.AnnotationEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="标注截图"
+        Width="880"
+        Height="620"
+        MinWidth="560"
+        MinHeight="380"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Theme.CardSolidBrush}"
+        TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+        TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+        TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+        KeyDown="OnWindowKeyDown">
+
+    <Window.Resources>
+        <Style x:Key="ToolToggle" TargetType="RadioButton">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource Theme.FocusVisual}" />
+            <Setter Property="FontFamily" Value="{DynamicResource Theme.FontFamily}" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{DynamicResource Theme.TextSecondaryBrush}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Root"
+                                Background="Transparent"
+                                BorderBrush="{DynamicResource Theme.FieldLineBrush}"
+                                BorderThickness="{DynamicResource Theme.Stroke.Hairline}"
+                                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                                Padding="12,6">
+                            <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource Theme.HoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource Theme.AccentSoftBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource Theme.AccentBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource Theme.AccentBrush}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ToolSeparator" TargetType="Rectangle">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Fill" Value="{DynamicResource Theme.BorderBrush}" />
+            <Setter Property="Margin" Value="10,4" />
+            <Setter Property="RadiusX" Value="0.5" />
+            <Setter Property="RadiusY" Value="0.5" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="14,8">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <!-- 第一行：绘图工具 -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,7">
+                        <RadioButton x:Name="ToolSelect"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="选择 (V)"
+                                     IsChecked="True"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolRectangle"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="矩形 (R)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolEllipse"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="椭圆 (E)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolLine"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="直线 (L)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolArrow"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="箭头 (A)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolFreehand"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="画笔 (F)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolText"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="文字 (T)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolMosaic"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="马赛克 (M)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolHighlight"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="高亮 (H)"
+                                     Checked="OnToolChecked" />
+                        <RadioButton x:Name="ToolCrop"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="tool"
+                                     Content="裁剪 (C)"
+                                     Checked="OnToolChecked" />
+                    </StackPanel>
+
+                    <!-- 第二行：样式、图像操作与编辑动作 -->
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel x:Name="SwatchPanel" Orientation="Horizontal" VerticalAlignment="Center" />
+                        <TextBox x:Name="CustomColorBox"
+                                 Style="{StaticResource Theme.Input}"
+                                 Width="92"
+                                 FontSize="12"
+                                 VerticalAlignment="Center"
+                                 ToolTip="自定义颜色 #RRGGBB，回车应用"
+                                 KeyDown="OnCustomColorKeyDown" />
+                        <Button Content="应用"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="8,5"
+                                FontSize="12"
+                                Margin="4,0,0,0"
+                                Click="OnApplyCustomColorClick" />
+
+                        <Rectangle Style="{StaticResource ToolSeparator}" />
+
+                        <RadioButton x:Name="SizeSmall"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="size"
+                                     Content="细"
+                                     Checked="OnSizeChecked" />
+                        <RadioButton x:Name="SizeMedium"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="size"
+                                     Content="中"
+                                     IsChecked="True"
+                                     Checked="OnSizeChecked" />
+                        <RadioButton x:Name="SizeLarge"
+                                     Style="{StaticResource ToolToggle}"
+                                     GroupName="size"
+                                     Content="粗"
+                                     Checked="OnSizeChecked" />
+                        <ComboBox x:Name="FontSizeBox"
+                                  Style="{StaticResource Theme.ComboBox}"
+                                  Width="86"
+                                  FontSize="12"
+                                  VerticalAlignment="Center"
+                                  ToolTip="文字字号（原图像素）"
+                                  SelectionChanged="OnFontSizeChanged" />
+
+                        <Rectangle Style="{StaticResource ToolSeparator}" />
+
+                        <Button x:Name="RotateLeftButton"
+                                Content="左转 90°"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="9,6"
+                                FontSize="12.5"
+                                ToolTip="逆时针旋转 90°，可撤销"
+                                Click="OnRotateLeftClick" />
+                        <Button x:Name="RotateRightButton"
+                                Content="右转 90°"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="9,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                ToolTip="顺时针旋转 90°，可撤销"
+                                Click="OnRotateRightClick" />
+                        <Button x:Name="Rotate180Button"
+                                Content="180°"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="9,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                ToolTip="旋转 180°，可撤销"
+                                Click="OnRotate180Click" />
+                        <Button x:Name="CropApplyButton"
+                                Content="应用裁剪"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                Padding="9,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                IsEnabled="False"
+                                ToolTip="按当前选区裁剪（Enter），可撤销"
+                                Click="OnApplyCropClick" />
+                        <Button x:Name="CropCancelButton"
+                                Content="取消选区"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="9,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                IsEnabled="False"
+                                Click="OnCancelCropClick" />
+
+                        <Rectangle Style="{StaticResource ToolSeparator}" />
+
+                        <Button x:Name="UndoButton"
+                                Content="撤销"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,6"
+                                FontSize="12.5"
+                                ToolTip="Ctrl + Z"
+                                Click="OnUndoClick" />
+                        <Button x:Name="RedoButton"
+                                Content="重做"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                ToolTip="Ctrl + Y"
+                                Click="OnRedoClick" />
+                        <Button x:Name="DeleteButton"
+                                Content="删除"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="10,6"
+                                FontSize="12.5"
+                                Margin="6,0,0,0"
+                                ToolTip="Delete 删除选中元素"
+                                Click="OnDeleteClick" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border DockPanel.Dock="Bottom"
+                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="14,10">
+            <Grid>
+                <TextBlock x:Name="InfoText"
+                           Style="{StaticResource Theme.Text.Tertiary}"
+                           FontSize="{DynamicResource Theme.FontSize.Caption}"
+                           VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="保存"
+                            Style="{StaticResource Theme.Button.Primary}"
+                            Padding="16,7"
+                            Click="OnSaveClick" />
+                    <Button Content="复制"
+                            Style="{StaticResource Theme.Button.Secondary}"
+                            Padding="16,7"
+                            Margin="8,0,0,0"
+                            Click="OnCopyClick" />
+                    <Button Content="贴图"
+                            Style="{StaticResource Theme.Button.Secondary}"
+                            Padding="16,7"
+                            Margin="8,0,0,0"
+                            Click="OnPinClick" />
+                    <Button Content="取消"
+                            Style="{StaticResource Theme.Button.Ghost}"
+                            Padding="16,7"
+                            Margin="8,0,0,0"
+                            Click="OnCancelClick" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid x:Name="CanvasHost" Background="{DynamicResource Theme.WallSecondaryBrush}">
+            <Border x:Name="CanvasArea"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+            <TextBox x:Name="TextOverlay"
+                     Style="{StaticResource Theme.Input}"
+                     Visibility="Collapsed"
+                     MinWidth="140"
+                     MaxWidth="480"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     PreviewKeyDown="OnTextOverlayKeyDown"
+                     LostKeyboardFocus="OnTextOverlayLostFocus" />
+        </Grid>
+    </DockPanel>
+</Window>

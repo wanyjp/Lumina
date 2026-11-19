@@ -1,0 +1,60 @@
+# ===== 构建产物 =====
+bin/
+obj/
+.artifacts/
+publish/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ===== Visual Studio / Rider =====
+.vs/
+.idea/
+*.VC.db
+*.VC.VC.opendb
+
+# ===== 测试与覆盖率 =====
+TestResults/
+*.trx
+*.coverage
+coverage/
+*.coverage.*
+coverage.json
+
+# ===== 日志与本地数据（禁止入库） =====
+logs/
+*.log
+*.db
+*.db-wal
+*.db-shm
+backups/
+config/local.*.json
+
+# ===== 系统与临时文件 =====
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp
+*.bak
+*.swp
+*~
+
+# ===== 凭据与密钥（禁止入库） =====
+*.pfx
+*.p12
+secrets.*
+.env
+.env.*
+
+# ===== 白噪音资源包（62 个文件 / 1.16 GB，禁止入库） =====
+# 资源本体位于仓库外的 app_audio 目录，随安装包或 Release 资源包分发；
+# 仓库内只保留 THIRD-PARTY-AUDIO.md 作为元数据与授权记录。
+# 以下为防误提交的兜底规则；确需入库单个音频时用 git add -f 显式添加。
+# 注意：core.ignorecase=true，切勿使用 Audio/ 或 audio/ 这类宽泛目录名，
+#       否则会连同 Lumina.SystemAdapters/Audio/ 下的 C# 源码一起忽略。
+*.wav
+*.ogg
+*.mp3
+!Lumina.App/Sounds/*.wav
+**/app_audio/

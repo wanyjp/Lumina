@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lumina.Services\Lumina.Services.csproj" />
+    <ProjectReference Include="..\Lumina.Domain\Lumina.Domain.csproj" />
+    <ProjectReference Include="..\Lumina.UI.Wpf\Lumina.UI.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- P3-04 实时捕获（实验）：WGC 帧的 GPU 裁剪与回读。
+         逐帧捕获需要 Windows.Graphics.Capture 投影，故与 App/SystemAdapters 对齐 19041。 -->
+    <PackageReference Include="Vortice.Direct3D11" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

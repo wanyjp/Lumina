@@ -1,0 +1,97 @@
+<UserControl x:Class="Lumina.UI.Wpf.Clock.NoiseMixerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+    <Border Style="{StaticResource Theme.Card.Strong}">
+        <StackPanel>
+            <Grid>
+                <StackPanel>
+                    <TextBlock Text="白噪音" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock x:Name="StatusText"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               Margin="0,-6,0,0" />
+                </StackPanel>
+                <Button x:Name="FadeButton"
+                        Content="1.5 秒淡出停止"
+                        Style="{StaticResource Theme.Button.Secondary}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Click="OnFadeClick" />
+            </Grid>
+
+            <TextBlock Text="按音频资源目录的父类别分类展示，类内可多选叠加。"
+                       Style="{StaticResource Theme.Text.Tertiary}"
+                       Margin="0,2,0,8" />
+            <WrapPanel x:Name="CategoryPanel" />
+
+            <ScrollViewer x:Name="SoundScroll"
+                          MaxHeight="420"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Margin="0,10,0,0">
+                <UniformGrid x:Name="SoundGrid" Columns="3" />
+            </ScrollViewer>
+
+            <Border Height="1" Background="{DynamicResource Theme.LineBrush}" Margin="0,4,0,12" />
+
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="主音量"
+                               Style="{StaticResource Theme.Text.Base}"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Width="64" />
+                    <Slider x:Name="MasterSlider"
+                            Style="{StaticResource Theme.Slider}"
+                            Width="220"
+                            ValueChanged="OnMasterVolumeChanged" />
+                    <TextBlock x:Name="MasterPercent"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
+                </StackPanel>
+                <TextBlock x:Name="DeviceText"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center" />
+            </Grid>
+
+            <Border Height="1" Background="{DynamicResource Theme.LineBrush}" Margin="0,12,0,12" />
+
+            <TextBlock Text="组合" Style="{StaticResource Theme.Text.Base}" FontWeight="SemiBold" />
+            <TextBlock Text="把当前开启的声源与音量保存为组合；点击组合即可整体切换（可跨类别）。"
+                       Style="{StaticResource Theme.Text.Tertiary}"
+                       Margin="0,2,0,0" />
+            <WrapPanel x:Name="ScenePanel" Margin="0,8,0,0" />
+
+            <Grid Margin="0,4,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="SceneNameBox"
+                         Grid.Column="0"
+                         Style="{StaticResource Theme.Input}"
+                         MaxLength="16"
+                         Margin="0,0,8,0" />
+                <Button Grid.Column="1"
+                        Content="保存组合"
+                        Style="{StaticResource Theme.Button.Secondary}"
+                        Margin="0,0,8,0"
+                        Click="OnSaveSceneClick" />
+                <Button Grid.Column="2"
+                        Content="删除所选"
+                        Style="{StaticResource Theme.Button.Ghost}"
+                        Click="OnDeleteSceneClick" />
+            </Grid>
+
+            <TextBlock x:Name="HintText"
+                       Style="{StaticResource Theme.Text.Tertiary}"
+                       Margin="0,8,0,0" />
+        </StackPanel>
+    </Border>
+</UserControl>

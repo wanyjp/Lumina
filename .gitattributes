@@ -1,0 +1,28 @@
+# 文本文件统一按 LF 存储，检出行为由 .gitattributes 控制
+* text=auto
+
+*.cs text eol=lf
+*.xaml text eol=lf
+*.csproj text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
+*.sln text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Windows 脚本保留 CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# 二进制资源不做文本转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.db binary
+*.db-wal binary
+*.db-shm binary

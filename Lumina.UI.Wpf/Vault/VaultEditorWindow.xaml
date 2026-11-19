@@ -1,0 +1,190 @@
+<Window x:Class="Lumina.UI.Wpf.Vault.VaultEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="密码条目"
+        Width="560"
+        Height="680"
+        MinWidth="520"
+        MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="{DynamicResource Theme.CardSolidBrush}"
+        TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+        TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+        TextElement.Foreground="{DynamicResource Theme.TextBrush}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="TitleText"
+                   Grid.Row="0"
+                   Text="新增条目"
+                   Style="{StaticResource Theme.Text.Title}" />
+
+        <ScrollViewer Grid.Row="1"
+                      Margin="0,14,0,0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="0,0,4,0">
+
+                <TextBlock Text="名称"
+                           Style="{StaticResource Theme.Text.Caption}" />
+                <TextBox x:Name="TitleBox"
+                         Style="{StaticResource Theme.Input}"
+                         AutomationProperties.Name="条目名称"
+                         MaxLength="80"
+                         Margin="0,4,0,0" />
+
+                <TextBlock Text="分类"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           Margin="0,12,0,0" />
+                <ComboBox x:Name="CategoryBox"
+                          Style="{StaticResource Theme.ComboBox}"
+                          AutomationProperties.Name="条目分类"
+                          Margin="0,4,0,0">
+                    <ComboBoxItem Content="登录" Tag="Login" />
+                    <ComboBoxItem Content="银行卡" Tag="BankCard" />
+                    <ComboBoxItem Content="证件" Tag="IdDocument" />
+                    <ComboBoxItem Content="安全笔记" Tag="SecureNote" />
+                </ComboBox>
+
+                <CheckBox x:Name="FavoriteBox"
+                          Content="收藏此条目"
+                          AutomationProperties.Name="收藏此条目"
+                          Style="{StaticResource Theme.Toggle}"
+                          Margin="0,10,0,0" />
+
+                <TextBlock Text="用户名"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           Margin="0,12,0,0" />
+                <TextBox x:Name="UsernameBox"
+                         Style="{StaticResource Theme.Input}"
+                         AutomationProperties.Name="条目用户名"
+                         MaxLength="200"
+                         Margin="0,4,0,0" />
+
+                <TextBlock Text="密码"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           Margin="0,12,0,0" />
+                <Grid Margin="0,4,0,0">
+                    <PasswordBox x:Name="PasswordMasked"
+                                 Style="{StaticResource Theme.PasswordInput}"
+                                 AutomationProperties.Name="条目密码"
+                                 Padding="10,8,96,8"
+                                 PasswordChanged="OnMaskedPasswordChanged" />
+                    <TextBox x:Name="PasswordPlain"
+                             Style="{StaticResource Theme.Input}"
+                             AutomationProperties.Name="条目密码明文"
+                             Padding="10,8,96,8"
+                             Visibility="Collapsed"
+                             TextChanged="OnPlainPasswordChanged" />
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0">
+                        <Button x:Name="PasswordEyeButton"
+                                Content="显示"
+                                AutomationProperties.Name="显示编辑密码"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="8,3"
+                                Click="OnTogglePasswordVisibility" />
+                        <Button Content="生成"
+                                AutomationProperties.Name="生成密码"
+                                Style="{StaticResource Theme.Button.Ghost}"
+                                Padding="8,3"
+                                Margin="4,0,0,0"
+                                Click="OnGeneratePassword" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Border x:Name="Strength1"
+                            Width="34"
+                            Height="4"
+                            CornerRadius="2"
+                            Margin="0,0,4,0"
+                            Background="{DynamicResource Theme.LineBrush}"
+                            VerticalAlignment="Center" />
+                    <Border x:Name="Strength2"
+                            Width="34"
+                            Height="4"
+                            CornerRadius="2"
+                            Margin="0,0,4,0"
+                            Background="{DynamicResource Theme.LineBrush}"
+                            VerticalAlignment="Center" />
+                    <Border x:Name="Strength3"
+                            Width="34"
+                            Height="4"
+                            CornerRadius="2"
+                            Margin="0,0,4,0"
+                            Background="{DynamicResource Theme.LineBrush}"
+                            VerticalAlignment="Center" />
+                    <Border x:Name="Strength4"
+                            Width="34"
+                            Height="4"
+                            CornerRadius="2"
+                            Background="{DynamicResource Theme.LineBrush}"
+                            VerticalAlignment="Center" />
+                    <TextBlock x:Name="StrengthLabel"
+                               Text="未设置"
+                               Style="{StaticResource Theme.Text.Caption}"
+                               VerticalAlignment="Center"
+                               Margin="8,0,0,0" />
+                </StackPanel>
+
+                <TextBlock Text="网址"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           Margin="0,12,0,0" />
+                <TextBox x:Name="UrlBox"
+                         Style="{StaticResource Theme.Input}"
+                         AutomationProperties.Name="条目网址"
+                         MaxLength="500"
+                         Margin="0,4,0,0" />
+
+                <TextBlock Text="备注"
+                           Style="{StaticResource Theme.Text.Caption}"
+                           Margin="0,12,0,0" />
+                <TextBox x:Name="NoteBox"
+                         Style="{StaticResource Theme.Input}"
+                         AutomationProperties.Name="条目备注"
+                         AcceptsReturn="True"
+                         AcceptsTab="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         VerticalContentAlignment="Top"
+                         Height="96"
+                         Padding="10"
+                         Margin="0,4,0,0" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" Margin="0,14,0,0">
+            <TextBlock x:Name="ErrorText"
+                       Foreground="{DynamicResource Theme.DangerBrush}"
+                       Style="{StaticResource Theme.Text.Caption}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       Margin="0,0,180,0"
+                       Visibility="Collapsed" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                <Button Content="取消"
+                        AutomationProperties.Name="取消编辑条目"
+                        Style="{StaticResource Theme.Button.Ghost}"
+                        Padding="16,7"
+                        Click="OnCancel" />
+                <Button x:Name="SaveButton"
+                        Content="保存"
+                        AutomationProperties.Name="保存条目"
+                        Style="{StaticResource Theme.Button.Primary}"
+                        Padding="20,7"
+                        Margin="8,0,0,0"
+                        Click="OnSave" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

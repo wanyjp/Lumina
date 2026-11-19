@@ -1,0 +1,42 @@
+<UserControl x:Class="Lumina.UI.Wpf.Clock.NoiseSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+             TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+             TextElement.Foreground="{DynamicResource Theme.TextBrush}"
+             Background="Transparent">
+    <StackPanel>
+        <TextBlock Text="输出设备" Style="{StaticResource Theme.Text.Tertiary}" />
+        <WrapPanel x:Name="DevicePanel" Margin="0,6,0,0" />
+        <TextBlock x:Name="DeviceHint"
+                   Style="{StaticResource Theme.Text.Caption}"
+                   Margin="0,4,0,0" />
+
+        <Border Height="1"
+                Background="{DynamicResource Theme.LineBrush}"
+                Margin="0,10,0,0" />
+
+        <TextBlock Text="主音量"
+                   Style="{StaticResource Theme.Text.Base}"
+                   FontWeight="SemiBold"
+                   Margin="0,10,0,0" />
+        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+            <Slider x:Name="VolumeSlider"
+                    Style="{StaticResource Theme.Slider}"
+                    Width="240"
+                    ValueChanged="OnVolumeChanged" />
+            <TextBlock x:Name="VolumeText"
+                       Style="{StaticResource Theme.Text.Caption}"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0" />
+        </StackPanel>
+
+        <TextBlock x:Name="LibraryText"
+                   Style="{StaticResource Theme.Text.Caption}"
+                   Margin="0,8,0,0" />
+
+        <TextBlock x:Name="StatusText"
+                   Style="{StaticResource Theme.Text.Tertiary}"
+                   Margin="0,4,0,0" />
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,248 @@
+<UserControl x:Class="Lumina.UI.Wpf.Focus.FocusStatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,18">
+
+            <Border Style="{StaticResource Theme.Card.Strong}" Padding="20">
+                <StackPanel>
+                    <Grid>
+                        <WrapPanel>
+                            <RadioButton x:Name="WeekTab"
+                                         Content="近 7 天"
+                                         Tag="week"
+                                         GroupName="StatsPeriod"
+                                         Style="{StaticResource Theme.ThemeChoice}"
+                                         IsChecked="True"
+                                         Margin="0,0,8,8"
+                                         Checked="OnPeriodChecked" />
+                            <RadioButton Content="近 30 天"
+                                         Tag="month30"
+                                         GroupName="StatsPeriod"
+                                         Style="{StaticResource Theme.ThemeChoice}"
+                                         Margin="0,0,8,8"
+                                         Checked="OnPeriodChecked" />
+                            <RadioButton Content="历史月报"
+                                         Tag="archive"
+                                         GroupName="StatsPeriod"
+                                         Style="{StaticResource Theme.ThemeChoice}"
+                                         Margin="0,0,8,8"
+                                         Checked="OnPeriodChecked" />
+                        </WrapPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <TextBlock x:Name="ExportStatusText"
+                                       Style="{StaticResource Theme.Text.Tertiary}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0" />
+                            <Button x:Name="ExportCsvButton"
+                                    Content="导出 CSV"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="10,6"
+                                    Click="OnExportCsvClick" />
+                            <Button x:Name="ExportJsonButton"
+                                    Content="导出 JSON"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="10,6"
+                                    Margin="6,0,0,0"
+                                    Click="OnExportJsonClick" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid x:Name="PagerRow" Margin="0,14,0,0">
+                        <Button x:Name="PrevButton"
+                                Content="‹"
+                                Width="36"
+                                Height="36"
+                                HorizontalAlignment="Left"
+                                FontSize="18"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                ToolTip="上一个周期"
+                                Click="OnPrevClick" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="RangeText"
+                                       Text="--"
+                                       Style="{StaticResource Theme.Text.SectionTitle}"
+                                       FontSize="16"
+                                       TextAlignment="Center" />
+                            <TextBlock x:Name="RelativeText"
+                                       Text="本周"
+                                       Style="{StaticResource Theme.Text.Caption}"
+                                       TextAlignment="Center"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                        <Button x:Name="NextButton"
+                                Content="›"
+                                Width="36"
+                                Height="36"
+                                HorizontalAlignment="Right"
+                                FontSize="18"
+                                Style="{StaticResource Theme.Button.Secondary}"
+                                ToolTip="下一个周期"
+                                Click="OnNextClick" />
+                    </Grid>
+
+                    <StackPanel x:Name="ArchiveRow"
+                                Margin="0,12,0,0"
+                                Visibility="Collapsed">
+                        <TextBlock Text="归档月份（最近 12 个月）"
+                                   Style="{StaticResource Theme.Text.Tertiary}" />
+                        <WrapPanel x:Name="ArchiveMonthBar" Margin="0,8,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <UniformGrid x:Name="SummaryGrid" Columns="4" Margin="0,14,0,0">
+                <Border Style="{StaticResource Theme.Card}" Margin="0,0,10,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="专注时长" Style="{StaticResource Theme.Text.Tertiary}" />
+                        <TextBlock x:Name="FocusValueText"
+                                   Text="--"
+                                   Style="{StaticResource Theme.Text.SectionTitle}"
+                                   Margin="0,6,0,0" />
+                        <TextBlock x:Name="FocusCompareText"
+                                   Text="—"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Theme.Card}" Margin="0,0,10,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="完成番茄" Style="{StaticResource Theme.Text.Tertiary}" />
+                        <TextBlock x:Name="PomodoroValueText"
+                                   Text="--"
+                                   Style="{StaticResource Theme.Text.SectionTitle}"
+                                   Margin="0,6,0,0" />
+                        <TextBlock x:Name="PomodoroCompareText"
+                                   Text="—"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Theme.Card}" Margin="0,0,10,0" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="待办完成率" Style="{StaticResource Theme.Text.Tertiary}" />
+                        <TextBlock x:Name="TodoValueText"
+                                   Text="--"
+                                   Style="{StaticResource Theme.Text.SectionTitle}"
+                                   Margin="0,6,0,0" />
+                        <TextBlock x:Name="TodoDetailText"
+                                   Text="—"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource Theme.Card}" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="今日目标" Style="{StaticResource Theme.Text.Tertiary}" />
+                        <TextBlock x:Name="GoalValueText"
+                                   Text="--"
+                                   Style="{StaticResource Theme.Text.SectionTitle}"
+                                   Margin="0,6,0,0" />
+                        <ProgressBar x:Name="GoalProgress"
+                                     Height="6"
+                                     Minimum="0"
+                                     Maximum="1"
+                                     Value="0"
+                                     Margin="0,8,0,0"
+                                     Foreground="{DynamicResource Theme.AccentBrush}"
+                                     Background="{DynamicResource Theme.AccentSoftBrush}" />
+                        <TextBlock x:Name="GoalDetailText"
+                                   Text="—"
+                                   Style="{StaticResource Theme.Text.Caption}"
+                                   Margin="0,4,0,0" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBox x:Name="GoalInput"
+                                     Style="{StaticResource Theme.Input}"
+                                     Width="56"
+                                     MaxLength="4"
+                                     Padding="6,3"
+                                     VerticalContentAlignment="Center"
+                                     ToolTip="每日目标分钟数（0–1440）" />
+                            <Button x:Name="SaveGoalButton"
+                                    Content="保存"
+                                    Style="{StaticResource Theme.Button.Ghost}"
+                                    Padding="8,4"
+                                    Margin="6,0,0,0"
+                                    Click="OnSaveGoalClick" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <Border x:Name="EmptyPanel"
+                    Style="{StaticResource Theme.Card}"
+                    Margin="0,14,0,0"
+                    Padding="28"
+                    Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="这一周期还没有专注记录"
+                               Style="{StaticResource Theme.Text.SectionTitle}"
+                               TextAlignment="Center" />
+                    <TextBlock Text="开始一次计时器或番茄钟后，这里会出现趋势、热力图与对比。"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               TextAlignment="Center"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="TrendCard" Style="{StaticResource Theme.Card}" Margin="0,14,0,0" Padding="18">
+                <StackPanel>
+                    <TextBlock x:Name="TrendTitle"
+                               Text="每日专注时长"
+                               Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <Grid x:Name="TrendHost" Height="170" Margin="0,14,0,0" />
+                    <TextBlock x:Name="TrendHintText"
+                               Text="柱高按本周期最大值等比缩放。"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="HeatmapCard" Style="{StaticResource Theme.Card}" Margin="0,14,0,0" Padding="18">
+                <StackPanel>
+                    <TextBlock Text="打卡热力图" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <StackPanel x:Name="HeatmapHost" Margin="0,12,0,0" />
+                    <TextBlock x:Name="HeatmapHintText"
+                               Text="颜色越深表示当日专注越久；未设定目标的日期不判定达成。"
+                               Style="{StaticResource Theme.Text.Tertiary}"
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="CompareCard" Style="{StaticResource Theme.Card}" Margin="0,14,0,0" Padding="18">
+                <StackPanel>
+                    <TextBlock Text="目标与历史对比" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock x:Name="CompareText"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border x:Name="DetailCard" Style="{StaticResource Theme.Card}" Margin="0,14,0,0" Padding="18">
+                <StackPanel>
+                    <TextBlock Text="统计详情" Style="{StaticResource Theme.Text.SectionTitle}" />
+                    <TextBlock x:Name="DetailFocusText"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap" />
+                    <TextBlock x:Name="DetailCountdownText"
+                               Style="{StaticResource Theme.Text.Secondary}"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,79 @@
+<Window x:Class="Lumina.UI.Wpf.Clock.WorldCityPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="世界时钟"
+        Width="520"
+        Height="660"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource Theme.CardSolidBrush}"
+        TextElement.FontFamily="{DynamicResource Theme.FontFamily}"
+        TextElement.FontSize="{DynamicResource Theme.FontSize.Body}"
+        TextElement.Foreground="{DynamicResource Theme.TextBrush}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="添加城市"
+                   Style="{StaticResource Theme.Text.Title}" />
+
+        <TextBox x:Name="SearchBox"
+                 Grid.Row="1"
+                 Style="{StaticResource Theme.Input}"
+                 AutomationProperties.Name="搜索城市"
+                 Margin="0,12,0,10"
+                 TextChanged="OnSearchChanged" />
+
+        <Border Grid.Row="2"
+                Background="{DynamicResource Theme.WallSecondaryBrush}"
+                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                BorderThickness="{DynamicResource Theme.Stroke.Hairline}"
+                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                Padding="6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="CatalogPanel" />
+            </ScrollViewer>
+        </Border>
+
+        <TextBlock x:Name="StatusText"
+                   Grid.Row="3"
+                   Style="{StaticResource Theme.Text.Caption}"
+                   Margin="0,8,0,0" />
+
+        <TextBlock Grid.Row="4"
+                   Text="已添加（本地时间始终显示）"
+                   Style="{StaticResource Theme.Text.Secondary}"
+                   FontWeight="SemiBold"
+                   Margin="0,12,0,6" />
+
+        <Border Grid.Row="5"
+                MaxHeight="168"
+                Background="{DynamicResource Theme.WallSecondaryBrush}"
+                BorderBrush="{DynamicResource Theme.BorderBrush}"
+                BorderThickness="{DynamicResource Theme.Stroke.Hairline}"
+                CornerRadius="{DynamicResource Theme.Radius.Small}"
+                Padding="6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="AddedPanel" />
+            </ScrollViewer>
+        </Border>
+
+        <Button Grid.Row="6"
+                Content="完成"
+                Style="{StaticResource Theme.Button.Secondary}"
+                HorizontalAlignment="Right"
+                Margin="0,16,0,0"
+                Click="OnCloseClick" />
+    </Grid>
+</Window>
