@@ -33,7 +33,7 @@ dotnet list Lumina.sln package --include-transitive
 ## 3. 提示音
 
 - 公开源码树中的 `Lumina.App/Sounds/notify-1.wav`、`notify-2.wav` 为项目原创合成音，按 CC0 1.0 释出，可自由使用；
-- 1.0.0 官方安装包曾使用来自 [Tukuppt](https://www.tukuppt.com/) 的提示音素材；该素材不适用 MIT License，也不包含在公开源码树中。再分发官方安装包时，请同时遵守 Tukuppt 的授权条款。
+- 早期私有开发构建曾使用来自 [Tukuppt](https://www.tukuppt.com/) 的提示音素材；该素材不适用 MIT License，也不包含在公开源码树或本次 v1.0.0 Release 安装包中。公开源码树与 Release 安装包均使用上述原创合成音。
 
 ## 4. 品牌资源
 
