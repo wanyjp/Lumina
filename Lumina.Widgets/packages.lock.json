@@ -113,6 +113,7 @@
           "Microsoft.Extensions.Options": "10.0.14"
         }
       }
-    }
+    },
+    "net10.0-windows10.0.19041/win-x64": {}
   }
 }
